@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Horario')}"></head>
+<body>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<div class="contenido">
+    <h3 class="mb-4" th:text="${horario.id == null} ? 'Nuevo horario' : 'Editar horario'"></h3>
+
+    <div class="card p-4" style="max-width: 550px;">
+        <form th:action="@{/horarios/guardar}" th:object="${horario}" method="post">
+            <input type="hidden" th:field="*{id}">
+
+            <div class="mb-3">
+                <label class="form-label">Médico</label>
+                <select class="form-select" th:field="*{medico.id}">
+                    <option th:each="m : ${medicos}" th:value="${m.id}" th:text="${m.nombre + ' ' + m.apellido}"></option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Día</label>
+                <select class="form-select" th:field="*{dia}">
+                    <option value="LUNES">Lunes</option>
+                    <option value="MARTES">Martes</option>
+                    <option value="MIERCOLES">Miércoles</option>
+                    <option value="JUEVES">Jueves</option>
+                    <option value="VIERNES">Viernes</option>
+                    <option value="SABADO">Sábado</option>
+                    <option value="DOMINGO">Domingo</option>
+                </select>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Hora inicio</label>
+                    <input type="time" class="form-control" th:field="*{horaInicio}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Hora fin</label>
+                    <input type="time" class="form-control" th:field="*{horaFin}" required>
+                </div>
+            </div>
+            <div class="mt-3">
+                <label class="form-label">Estado</label>
+                <select class="form-select" th:field="*{estado}">
+                    <option value="ACTIVO">Activo</option>
+                    <option value="INACTIVO">Inactivo</option>
+                </select>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a th:href="@{/horarios}" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

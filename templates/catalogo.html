@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Catálogo de especialistas')}"></head>
+<body class="publico catalogo">
+
+<!-- ==================== Barra superior ==================== -->
+<nav class="nav-publica">
+    <div class="interior">
+        <a th:href="@{/catalogo}" class="marca">
+            <img th:src="@{/img/logo.svg}" alt=""> Mi Agenda de Clínica
+        </a>
+
+        <div class="enlaces d-none d-md-block">
+            <a href="#especialidades">Especialidades</a>
+            <a href="#especialistas">Especialistas</a>
+            <a href="#como-funciona">Cómo funciona</a>
+        </div>
+
+        <div class="d-flex gap-2">
+            <a th:if="${logueado}" th:href="@{/dashboard}" class="btn btn-primary btn-sm">
+                <i class="bi bi-speedometer2"></i> Ir al panel
+            </a>
+            <a th:unless="${logueado}" th:href="@{/login}" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-box-arrow-in-right"></i> Ingresar
+            </a>
+            <a th:if="${!logueado and registroHabilitado}" th:href="@{/registro}" class="btn btn-primary btn-sm">
+                <i class="bi bi-person-plus"></i> Crear cuenta
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- ==================== Portada ==================== -->
+<header class="hero">
+    <div class="contenedor hero-grid">
+        <div>
+            <h1>Encuentra a tu <span class="resalte">especialista</span> y reserva tu cita en minutos.</h1>
+            <p>Elige la especialidad, revisa los horarios de cada médico y solicita tu cita sin necesidad de crear una cuenta.</p>
+
+            <div class="buscador" role="search">
+                <i class="bi bi-search"></i>
+                <input type="search" id="buscador" class="form-control"
+                       placeholder="Busca por nombre o especialidad"
+                       autocomplete="off" aria-label="Buscar especialista">
+            </div>
+        </div>
+
+        <div class="hero-datos">
+            <div class="hero-dato">
+                <span class="hero-icono"><i class="bi bi-people"></i></span>
+                <div>
+                    <div class="num" th:text="${#lists.size(medicos)}">0</div>
+                    <div class="txt">especialistas atendiendo</div>
+                </div>
+            </div>
+            <div class="hero-dato">
+                <span class="hero-icono"><i class="bi bi-heart-pulse"></i></span>
+                <div>
+                    <div class="num" th:text="${#lists.size(especialidades)}">0</div>
+                    <div class="txt">especialidades disponibles</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main>
+
+    <!-- ==================== Mensajes ==================== -->
+    <div class="contenedor" th:if="${exito != null or error != null}">
+        <div class="alert alert-success mt-4 mb-0 shadow-sm" role="status" th:if="${exito}">
+            <i class="bi bi-check-circle-fill"></i> <span th:text="${exito}"></span>
+        </div>
+        <div class="alert alert-danger mt-4 mb-0 shadow-sm" role="alert" th:if="${error}">
+            <i class="bi bi-exclamation-triangle-fill"></i> <span th:text="${error}"></span>
+        </div>
+    </div>
+
+    <!-- ==================== Especialidades (filtros) ==================== -->
+    <section class="bloque" id="especialidades">
+        <div class="contenedor">
+            <div class="titulo-seccion">
+                <span class="icono"><i class="bi bi-grid"></i></span>
+                <div>
+                    <h2>Especialidades</h2>
+                    <p class="sub">Filtra los especialistas por área médica.</p>
+                </div>
+            </div>
+
+            <div class="chips">
+                <button type="button" class="chip activo" data-esp="">
+                    Todas <small th:text="${#lists.size(medicos)}">0</small>
+                </button>
+                <button type="button" class="chip" th:each="e : ${especialidades}"
+                        th:data-esp="${e.id}" th:title="${e.descripcion}">
+                    <span th:text="${e.nombre}">Especialidad</span>
+                    <small th:text="${conteo[e.id]}">0</small>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== Especialistas ==================== -->
+    <section class="bloque bloque-gris" id="especialistas">
+        <div class="contenedor">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div class="titulo-seccion">
+                    <span class="icono"><i class="bi bi-person-badge"></i></span>
+                    <div>
+                        <h2>Especialistas</h2>
+                        <p class="sub">Pulsa “Solicitar cita” en el médico que prefieras.</p>
+                    </div>
+                </div>
+                <span class="badge text-bg-light border fs-6" id="contadorResultados"></span>
+            </div>
+
+            <div class="rejilla-medicos">
+                <article class="doc-card" th:each="m : ${medicos}"
+                         th:data-id="${m.id}" th:data-esp="${m.especialidadId}" th:data-buscar="${m.textoBusqueda}">
+
+                    <span class="doc-estado" th:if="${!#lists.isEmpty(m.horarios)}" title="Recibe citas"></span>
+
+                    <div class="doc-cabecera">
+                        <!-- Avatar: foto o iniciales (el botón de cámara solo aparece con sesión iniciada) -->
+                        <div class="avatar-wrap">
+                            <div class="avatar" th:classappend="${m.fotoUrl != null} ? 'con-foto'">
+                                <img th:if="${m.fotoUrl != null}" th:src="${m.fotoUrl}" th:alt="${m.nombreCompleto}" loading="lazy">
+                                <span class="iniciales" th:text="${m.iniciales}">DR</span>
+                            </div>
+                            <button type="button" class="avatar-editar" th:if="${logueado}"
+                                    title="Cambiar foto" aria-label="Cambiar foto del avatar">
+                                <i class="bi bi-camera-fill"></i>
+                            </button>
+                        </div>
+                        <div>
+                            <h3 class="doc-nombre" th:text="'Dr(a). ' + ${m.nombreCompleto}">Dr(a). Nombre</h3>
+                            <span class="doc-esp" th:text="${m.especialidad}">Especialidad</span>
+                        </div>
+                    </div>
+
+                    <p class="doc-desc" th:if="${m.descripcion != null}" th:text="${m.descripcion}"></p>
+
+                    <ul class="doc-horarios" th:if="${!#lists.isEmpty(m.horarios)}">
+                        <li th:each="h : ${m.horarios}">
+                            <i class="bi bi-clock"></i><span th:text="${h}">Lun 08:00 - 12:00</span>
+                        </li>
+                    </ul>
+                    <p class="doc-desc fst-italic" th:if="${#lists.isEmpty(m.horarios)}">
+                        Horarios por confirmar. Llama a la clínica para agendar.
+                    </p>
+
+                    <button type="button" class="btn btn-primary btn-solicitar" th:if="${!#lists.isEmpty(m.horarios)}"
+                            th:data-solicitar="${m.id}" th:data-nombre="'Dr(a). ' + ${m.nombreCompleto}">
+                        <i class="bi bi-calendar2-plus"></i> Solicitar cita <i class="bi bi-chevron-right"></i>
+                    </button>
+                </article>
+            </div>
+
+            <!-- Estados vacíos -->
+            <div class="vacio" id="sinResultados" hidden>
+                <i class="bi bi-search-heart"></i>
+                <p class="mt-2 mb-0">No encontramos especialistas con ese filtro. Prueba con otra búsqueda o elige “Todas”.</p>
+            </div>
+            <div class="vacio" th:if="${#lists.isEmpty(medicos)}">
+                <i class="bi bi-hospital"></i>
+                <p class="mt-2 mb-0">Aún no hay especialistas publicados. Vuelve pronto.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== Cómo funciona ==================== -->
+    <section class="bloque" id="como-funciona">
+        <div class="contenedor">
+            <div class="titulo-seccion">
+                <span class="icono"><i class="bi bi-lightbulb"></i></span>
+                <div>
+                    <h2>¿Cómo funciona?</h2>
+                    <p class="sub">Tres pasos y tu cita queda registrada.</p>
+                </div>
+            </div>
+
+            <div class="pasos">
+                <div class="paso">
+                    <div class="paso-cabecera"><span class="paso-num">1</span><span class="paso-icono"><i class="bi bi-search"></i></span></div>
+                    <h3>Elige tu especialista</h3>
+                    <p>Filtra por especialidad o busca por nombre y revisa sus horarios de atención.</p>
+                </div>
+                <div class="paso">
+                    <div class="paso-cabecera"><span class="paso-num">2</span><span class="paso-icono"><i class="bi bi-calendar2-week"></i></span></div>
+                    <h3>Escoge día y hora</h3>
+                    <p>El sistema te muestra solo las horas libres del médico, así que no habrá choques.</p>
+                </div>
+                <div class="paso">
+                    <div class="paso-cabecera"><span class="paso-num">3</span><span class="paso-icono"><i class="bi bi-check-circle"></i></span></div>
+                    <h3>La clínica confirma</h3>
+                    <p>Tu cita queda como pendiente y el equipo se comunica contigo para confirmarla.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- ==================== Pie de página ==================== -->
+<footer class="pie">
+    <div class="contenedor">
+        <div class="pie-grid">
+            <div>
+                <a th:href="@{/catalogo}" class="marca">
+                    <img th:src="@{/img/logo.svg}" alt=""> Mi Agenda de Clínica
+                </a>
+                <p class="pie-lema">Cuidamos tu salud con los mejores especialistas.</p>
+            </div>
+
+            <div>
+                <h4>Enlaces</h4>
+                <a href="#especialidades">Especialidades</a>
+                <a href="#especialistas">Especialistas</a>
+                <a href="#como-funciona">Cómo funciona</a>
+            </div>
+
+            <!-- Cambia estos datos de contacto por los reales de la clínica -->
+            <div>
+                <h4>Contacto</h4>
+                <span><i class="bi bi-telephone-fill"></i> +503 0000 0000</span>
+                <span><i class="bi bi-envelope-fill"></i> info@miagendaclinica.com</span>
+                <span><i class="bi bi-geo-alt-fill"></i> San Salvador, El Salvador</span>
+            </div>
+
+            <!-- Pon aquí los enlaces reales de tus redes en lugar de "#" -->
+            <div>
+                <h4>Síguenos</h4>
+                <div class="redes">
+                    <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                    <a href="#" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <p class="pie-copy" th:text="'© ' + ${#dates.year(#dates.createNow())} + ' Mi Agenda de Clínica. Todos los derechos reservados.'">
+            © Mi Agenda de Clínica. Todos los derechos reservados.
+        </p>
+    </div>
+</footer>
+
+<!-- ==================== Modal: solicitud de cita ==================== -->
+<div class="modal fade" id="modalCita" tabindex="-1" aria-labelledby="modalCitaTitulo" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <form id="formCita" th:action="@{/catalogo/solicitar}" method="post"
+                  th:data-api="@{/catalogo/api/disponibilidad}">
+
+                <div class="modal-header">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="avatar avatar-sm" id="citaMedicoAvatar" hidden></div>
+                        <div>
+                            <h5 class="modal-title" id="modalCitaTitulo">Solicitar cita</h5>
+                            <div class="text-muted small" id="citaMedicoNombre"></div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" name="medicoId" id="citaMedicoId">
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="citaNombre">Nombre</label>
+                            <input type="text" class="form-control" id="citaNombre" name="nombre" maxlength="80" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="citaApellido">Apellido</label>
+                            <input type="text" class="form-control" id="citaApellido" name="apellido" maxlength="80" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label" for="citaTelefono">Teléfono</label>
+                            <input type="tel" class="form-control" id="citaTelefono" name="telefono" maxlength="20"
+                                   inputmode="tel" minlength="7" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="citaCorreo">Correo (opcional)</label>
+                            <input type="email" class="form-control" id="citaCorreo" name="correo" maxlength="100">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label" for="citaFecha">Fecha</label>
+                            <input type="date" class="form-control" id="citaFecha" name="fecha" required
+                                   th:min="${minFecha}" th:max="${maxFecha}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="citaHora">Hora</label>
+                            <select class="form-select" id="citaHora" name="hora" required disabled>
+                                <option value="">Primero elige la fecha</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="alert alert-warning py-2 mb-0" id="citaAviso" hidden></div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label" for="citaMotivo">Motivo de la consulta (opcional)</label>
+                            <textarea class="form-control" id="citaMotivo" name="motivo" rows="2" maxlength="255"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="citaEnviar" disabled>Solicitar cita</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== Modal: editar avatar (solo con sesión iniciada) ==================== -->
+<div class="modal fade" id="modalAvatar" tabindex="-1" aria-labelledby="modalAvatarTitulo" aria-hidden="true" th:if="${logueado}">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAvatarTitulo">Editar avatar</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body text-center">
+                <div class="avatar avatar-grande mx-auto mb-2" id="avatarVista"></div>
+                <div class="fw-bold mb-3" id="avatarNombre"></div>
+
+                <label class="btn btn-outline-primary w-100 mb-2" for="avatarArchivo">
+                    <i class="bi bi-upload"></i> Elegir foto
+                </label>
+                <input type="file" id="avatarArchivo" accept="image/*" hidden>
+                <input type="url" class="form-control mb-3" id="avatarUrl" placeholder="o pega el enlace de una imagen">
+
+                <div class="small text-muted text-start mb-2">Color (cuando no hay foto)</div>
+                <div class="colores" id="avatarColores"></div>
+
+                <div class="text-danger small mt-3" id="avatarAviso" hidden></div>
+                <div class="text-muted small mt-3">Los cambios se guardan en este navegador.</div>
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-light border btn-sm" id="avatarQuitar">Quitar foto</button>
+                    <button type="button" class="btn btn-light border btn-sm" id="avatarReset">Restablecer</button>
+                </div>
+                <button type="button" class="btn btn-primary" id="avatarGuardar">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+<script th:src="@{/js/catalogo.js}"></script>
+<script th:src="@{/js/catalogo-avatar.js}"></script>
+</body>
+</html>

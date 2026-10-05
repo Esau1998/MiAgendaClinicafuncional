@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Crear cuenta')}"></head>
+<body class="auth">
+<main class="auth-wrap">
+    <section class="auth-brand">
+        <div class="logo-fila"><img th:src="@{/img/logo.svg}" alt=""> Mi Agenda de Clínica</div>
+        <h1>Tu consulta, organizada de principio a fin.</h1>
+        <p>Citas, pacientes, médicos, historial clínico y pagos en un solo lugar, con acceso según el rol de cada persona del equipo.</p>
+        <ul>
+            <li><i class="bi bi-calendar2-check"></i><span>Agenda sin choques de horario entre citas del mismo médico.</span></li>
+            <li><i class="bi bi-shield-lock"></i><span>Contraseñas cifradas y recuperación de acceso con enlace de un solo uso.</span></li>
+            <li><i class="bi bi-window-stack"></i><span>Catálogo público para que tus pacientes soliciten cita en línea.</span></li>
+        </ul>
+    </section>
+
+    <section class="auth-card">
+        <h2>Crear cuenta</h2>
+        <p class="sub">Regístrate para entrar al sistema. Tu cuenta se crea con rol de recepcionista.</p>
+
+        <div class="alert alert-danger py-2" th:if="${error}" th:text="${error}"></div>
+
+        <form th:action="@{/registro}" method="post" data-confirmar-password autocomplete="off">
+            <div class="mb-3">
+                <label class="form-label" for="nombreCompleto">Nombre completo</label>
+                <div class="input-icono">
+                    <i class="bi bi-person-vcard"></i>
+                    <input type="text" class="form-control" id="nombreCompleto" name="nombreCompleto" maxlength="100" required th:value="${nombreCompleto}">
+                </div>
+            </div>
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="form-label" for="username">Usuario</label>
+                    <div class="input-icono">
+                        <i class="bi bi-at"></i>
+                        <input type="text" class="form-control" id="username" name="username" minlength="4" maxlength="30"
+                               pattern="[A-Za-z0-9._\-]{4,30}" title="De 4 a 30 caracteres: letras, números, punto, guion o guion bajo"
+                               required th:value="${username}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="email">Correo electrónico</label>
+                    <div class="input-icono">
+                        <i class="bi bi-envelope"></i>
+                        <input type="email" class="form-control" id="email" name="email" maxlength="100" required th:value="${email}">
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="password">Contraseña</label>
+                <div class="input-icono con-ojo">
+                    <i class="bi bi-lock"></i>
+                    <input type="password" class="form-control" id="password" name="password" minlength="8" maxlength="64"
+                           required autocomplete="new-password" data-fuerza="fuerzaReg">
+                    <button type="button" class="btn-ojo" data-ver-password="password" aria-label="Mostrar u ocultar contraseña"><i class="bi bi-eye"></i></button>
+                </div>
+                <div class="fuerza" id="fuerzaReg"><span></span></div>
+                <div class="fuerza-texto">Mínimo 8 caracteres, con letras y números.</div>
+            </div>
+            <div class="mb-4">
+                <label class="form-label" for="confirmar">Confirmar contraseña</label>
+                <div class="input-icono">
+                    <i class="bi bi-lock-fill"></i>
+                    <input type="password" class="form-control" id="confirmar" name="confirmar" required autocomplete="new-password">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2">Crear cuenta</button>
+        </form>
+
+        <div class="divisor">¿Ya tienes cuenta?</div>
+        <a th:href="@{/login}" class="btn btn-outline-primary w-100"><i class="bi bi-box-arrow-in-right"></i> Iniciar sesión</a>
+    </section>
+</main>
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

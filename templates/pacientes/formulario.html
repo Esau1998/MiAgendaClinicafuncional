@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Paciente')}"></head>
+<body>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<div class="contenido">
+    <h3 class="mb-4" th:text="${paciente.id == null} ? 'Nuevo paciente' : 'Editar paciente'"></h3>
+
+    <div class="card p-4" style="max-width: 700px;">
+        <form th:action="@{/pacientes/guardar}" th:object="${paciente}" method="post">
+            <input type="hidden" th:field="*{id}">
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" class="form-control" th:field="*{nombre}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Apellido</label>
+                    <input type="text" class="form-control" th:field="*{apellido}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Fecha de nacimiento</label>
+                    <input type="date" class="form-control" th:field="*{fechaNacimiento}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Sexo</label>
+                    <select class="form-select" th:field="*{sexo}">
+                        <option value="M">Masculino</option>
+                        <option value="F">Femenino</option>
+                        <option value="OTRO">Otro</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Teléfono</label>
+                    <input type="text" class="form-control" th:field="*{telefono}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Correo</label>
+                    <input type="email" class="form-control" th:field="*{correo}">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Dirección</label>
+                    <input type="text" class="form-control" th:field="*{direccion}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Contacto de emergencia</label>
+                    <input type="text" class="form-control" th:field="*{contactoEmergencia}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Estado</label>
+                    <select class="form-select" th:field="*{estado}">
+                        <option value="ACTIVO">Activo</option>
+                        <option value="INACTIVO">Inactivo</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a th:href="@{/pacientes}" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

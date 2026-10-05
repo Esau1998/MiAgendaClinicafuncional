@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Especialidades')}"></head>
+<body>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<div class="contenido">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Especialidades</h3>
+        <a th:href="@{/especialidades/nuevo}" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Nueva especialidad</a>
+    </div>
+
+    <div class="card">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th class="text-end">Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="e : ${especialidades}">
+                <td th:text="${e.nombre}"></td>
+                <td th:text="${e.descripcion}"></td>
+                <td class="text-end">
+                    <a th:href="@{/especialidades/editar/{id}(id=${e.id})}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                    <a th:href="@{/especialidades/eliminar/{id}(id=${e.id})}" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar esta especialidad?')"><i class="bi bi-trash"></i></a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(especialidades)}">
+                <td colspan="3" class="text-center text-muted py-4">No hay especialidades registradas.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

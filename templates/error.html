@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Algo salió mal')}"></head>
+<body class="auth">
+<main class="error-caja panel-claro">
+    <div class="codigo" th:text="${status != null ? status : 'Error'}">404</div>
+    <h2 class="mt-2">No pudimos mostrar esta página</h2>
+    <p class="text-muted">La dirección no existe o ocurrió un problema al procesarla. Vuelve al inicio e inténtalo de nuevo.</p>
+    <a th:href="@{/}" class="btn btn-primary"><i class="bi bi-house"></i> Ir al inicio</a>
+</main>
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

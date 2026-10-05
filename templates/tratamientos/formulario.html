@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Tratamiento')}"></head>
+<body>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<div class="contenido">
+    <h3 class="mb-4">Nuevo tratamiento</h3>
+
+    <div class="card p-4" style="max-width: 600px;">
+        <form th:action="@{/tratamientos/guardar}" th:object="${tratamiento}" method="post">
+            <input type="hidden" th:field="*{historialClinico.id}">
+
+            <div class="mb-3">
+                <label class="form-label">Medicamento / tratamiento</label>
+                <input type="text" class="form-control" th:field="*{medicamento}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Indicaciones</label>
+                <input type="text" class="form-control" th:field="*{indicaciones}">
+            </div>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Dosis</label>
+                    <input type="text" class="form-control" th:field="*{dosis}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Frecuencia</label>
+                    <input type="text" class="form-control" th:field="*{frecuencia}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Duración</label>
+                    <input type="text" class="form-control" th:field="*{duracion}">
+                </div>
+            </div>
+            <div class="mt-3">
+                <label class="form-label">Observaciones</label>
+                <textarea class="form-control" th:field="*{observaciones}" rows="2"></textarea>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a th:href="@{/historial/tratamientos/{id}(id=${tratamiento.historialClinico.id})}" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

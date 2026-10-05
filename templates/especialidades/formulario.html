@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Especialidad')}"></head>
+<body>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<div class="contenido">
+    <h3 class="mb-4" th:text="${especialidad.id == null} ? 'Nueva especialidad' : 'Editar especialidad'"></h3>
+
+    <div class="card p-4" style="max-width: 500px;">
+        <form th:action="@{/especialidades/guardar}" th:object="${especialidad}" method="post">
+            <input type="hidden" th:field="*{id}">
+            <div class="mb-3">
+                <label class="form-label">Nombre</label>
+                <input type="text" class="form-control" th:field="*{nombre}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Descripción</label>
+                <textarea class="form-control" th:field="*{descripcion}" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a th:href="@{/especialidades}" class="btn btn-outline-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

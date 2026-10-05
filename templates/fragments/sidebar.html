@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="sidebar">
+    <button class="btn-menu" type="button" aria-label="Abrir menú" data-toggle-sidebar><i class="bi bi-list"></i></button>
+    <div class="sidebar-backdrop" data-toggle-sidebar></div>
+
+    <aside class="sidebar" id="sidebar">
+        <a th:href="@{/dashboard}" class="sidebar-brand">
+            <img th:src="@{/img/logo.svg}" alt="">
+            <span>Mi Agenda<small>de Clínica</small></span>
+        </a>
+
+        <a th:href="@{/dashboard}" data-ruta="/dashboard" class="sidebar-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a th:href="@{/pacientes}" data-ruta="/pacientes" class="sidebar-link"><i class="bi bi-person"></i> Pacientes</a>
+        <a th:href="@{/medicos}" data-ruta="/medicos" class="sidebar-link"><i class="bi bi-heart-pulse"></i> Médicos</a>
+        <a th:href="@{/especialidades}" data-ruta="/especialidades" class="sidebar-link"><i class="bi bi-bookmark"></i> Especialidades</a>
+        <a th:href="@{/horarios}" data-ruta="/horarios" class="sidebar-link"><i class="bi bi-clock"></i> Horarios</a>
+        <a th:href="@{/citas}" data-ruta="/citas" class="sidebar-link"><i class="bi bi-calendar-check"></i> Citas</a>
+        <a th:href="@{/historial}" data-ruta="/historial" class="sidebar-link"><i class="bi bi-file-earmark-medical"></i> Historial</a>
+        <a th:href="@{/tratamientos}" data-ruta="/tratamientos" class="sidebar-link"><i class="bi bi-capsule"></i> Tratamientos</a>
+        <a th:href="@{/pagos}" data-ruta="/pagos" class="sidebar-link"><i class="bi bi-cash-coin"></i> Pagos</a>
+        <a th:href="@{/reportes}" data-ruta="/reportes" class="sidebar-link"><i class="bi bi-graph-up"></i> Reportes</a>
+        <a th:href="@{/usuarios}" data-ruta="/usuarios" class="sidebar-link" th:if="${session.rol == 'ADMINISTRADOR'}"><i class="bi bi-people"></i> Usuarios</a>
+        <a th:href="@{/catalogo}" target="_blank" class="sidebar-link"><i class="bi bi-window-stack"></i> Ver catálogo público</a>
+
+        <div class="sidebar-usuario">
+            <div class="nombre" th:text="${session.usuarioNombre}">Usuario</div>
+            <div class="rol" th:text="${session.rol}">ROL</div>
+            <a th:href="@{/perfil}" data-ruta="/perfil" class="sidebar-link"><i class="bi bi-person-gear"></i> Mi perfil</a>
+            <a th:href="@{/logout}" class="sidebar-link text-warning"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a>
+        </div>
+    </aside>
+</div>
+</body>
+</html>

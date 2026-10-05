@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Médico')}"></head>
+<body>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<div class="contenido">
+    <h3 class="mb-4" th:text="${medico.id == null} ? 'Nuevo médico' : 'Editar médico'"></h3>
+
+    <div class="card p-4" style="max-width: 700px;">
+        <form th:action="@{/medicos/guardar}" th:object="${medico}" method="post">
+            <input type="hidden" th:field="*{id}">
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" class="form-control" th:field="*{nombre}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Apellido</label>
+                    <input type="text" class="form-control" th:field="*{apellido}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Teléfono</label>
+                    <input type="text" class="form-control" th:field="*{telefono}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Correo</label>
+                    <input type="email" class="form-control" th:field="*{correo}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Especialidad</label>
+                    <select class="form-select" th:field="*{especialidad.id}">
+                        <option th:each="e : ${especialidades}" th:value="${e.id}" th:text="${e.nombre}"></option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Número profesional</label>
+                    <input type="text" class="form-control" th:field="*{numeroProfesional}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Estado</label>
+                    <select class="form-select" th:field="*{estado}">
+                        <option value="ACTIVO">Activo</option>
+                        <option value="INACTIVO">Inactivo</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Descripción para el catálogo público (opcional)</label>
+                    <textarea class="form-control" th:field="*{descripcion}" rows="3" maxlength="600" placeholder="Ej.: Pediatra con 10 años de experiencia en control del niño sano."></textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">URL de la foto (opcional)</label>
+                    <input type="text" class="form-control" th:field="*{fotoUrl}" maxlength="500" placeholder="https://... (si la dejas vacía se muestran las iniciales)">
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a th:href="@{/medicos}" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

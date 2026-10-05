@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Historial clínico')}"></head>
+<body>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<div class="contenido">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 th:text="${paciente != null} ? 'Historial de ' + ${paciente.nombre} + ' ' + ${paciente.apellido} : 'Historial clínico'"></h3>
+        <a th:href="@{/historial/nuevo(pacienteId=${paciente != null ? paciente.id : null})}" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Nuevo registro</a>
+    </div>
+
+    <a th:href="@{/pacientes}" th:if="${paciente != null}" class="btn btn-sm btn-outline-secondary mb-3"><i class="bi bi-arrow-left"></i> Volver a pacientes</a>
+
+    <div class="card mb-3" th:each="h : ${historiales}">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <h6 th:text="${h.fecha} + ' — Dr(a). ' + ${h.medico.nombre + ' ' + h.medico.apellido}"></h6>
+                <a th:href="@{/historial/tratamientos/{id}(id=${h.id})}" class="btn btn-sm btn-outline-info">Ver tratamientos</a>
+            </div>
+            <p><b>Motivo:</b> <span th:text="${h.motivo}"></span></p>
+            <p><b>Diagnóstico:</b> <span th:text="${h.diagnostico}"></span></p>
+            <p><b>Tratamiento:</b> <span th:text="${h.tratamiento}"></span></p>
+            <p class="mb-0"><b>Observaciones:</b> <span th:text="${h.observaciones}"></span></p>
+        </div>
+    </div>
+
+    <p th:if="${#lists.isEmpty(historiales)}" class="text-muted">No hay registros en el historial.</p>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

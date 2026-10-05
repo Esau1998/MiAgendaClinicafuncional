@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Reportes')}"></head>
+<body>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<div class="contenido">
+    <h3 class="mb-4">Reportes</h3>
+
+    <ul class="nav nav-tabs" id="tabReportes" role="tablist">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#citas">Citas</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#medico">Por médico</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#especialidad">Por especialidad</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#pagos">Pagos</button></li>
+    </ul>
+
+    <div class="tab-content card p-3 mt-2">
+
+        <div class="tab-pane fade show active" id="citas">
+            <table class="table table-sm">
+                <thead><tr><th>Fecha</th><th>Paciente</th><th>Médico</th><th>Estado</th></tr></thead>
+                <tbody>
+                <tr th:each="c : ${citas}">
+                    <td th:text="${c.fecha}"></td>
+                    <td th:text="${c.paciente.nombre + ' ' + c.paciente.apellido}"></td>
+                    <td th:text="${c.medico.nombre + ' ' + c.medico.apellido}"></td>
+                    <td th:text="${c.estado}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tab-pane fade" id="medico">
+            <table class="table table-sm">
+                <thead><tr><th>Médico</th><th>Total de citas</th></tr></thead>
+                <tbody>
+                <tr th:each="entry : ${porMedico}">
+                    <td th:text="${entry.key}"></td>
+                    <td th:text="${entry.value}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tab-pane fade" id="especialidad">
+            <table class="table table-sm">
+                <thead><tr><th>Especialidad</th><th>Cantidad de citas</th></tr></thead>
+                <tbody>
+                <tr th:each="entry : ${porEspecialidad}">
+                    <td th:text="${entry.key}"></td>
+                    <td th:text="${entry.value}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tab-pane fade" id="pagos">
+            <table class="table table-sm">
+                <thead><tr><th>Fecha</th><th>Paciente</th><th>Monto</th><th>Método</th><th>Estado</th></tr></thead>
+                <tbody>
+                <tr th:each="pg : ${pagos}">
+                    <td th:text="${pg.fecha}"></td>
+                    <td th:text="${pg.paciente.nombre + ' ' + pg.paciente.apellido}"></td>
+                    <td th:text="'$' + ${pg.monto}"></td>
+                    <td th:text="${pg.metodoPago}"></td>
+                    <td th:text="${pg.estado}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>

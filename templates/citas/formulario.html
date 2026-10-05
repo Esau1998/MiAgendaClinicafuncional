@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Cita')}"></head>
+<body>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<div class="contenido">
+    <h3 class="mb-4" th:text="${cita.id == null} ? 'Nueva cita' : 'Editar cita'"></h3>
+
+    <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+
+    <div class="card p-4" style="max-width: 650px;">
+        <form th:action="@{/citas/guardar}" th:object="${cita}" method="post">
+            <input type="hidden" th:field="*{id}">
+
+            <div class="mb-3">
+                <label class="form-label">Paciente</label>
+                <select class="form-select" th:field="*{paciente.id}">
+                    <option th:each="p : ${pacientes}" th:value="${p.id}" th:text="${p.nombre + ' ' + p.apellido}"></option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Médico</label>
+                <select class="form-select" th:field="*{medico.id}">
+                    <option th:each="m : ${medicos}" th:value="${m.id}" th:text="${m.nombre + ' ' + m.apellido}"></option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Especialidad</label>
+                <select class="form-select" th:field="*{especialidad.id}">
+                    <option th:each="e : ${especialidades}" th:value="${e.id}" th:text="${e.nombre}"></option>
+                </select>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Fecha</label>
+                    <input type="date" class="form-control" th:field="*{fecha}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Hora</label>
+                    <input type="time" class="form-control" th:field="*{hora}" required>
+                </div>
+            </div>
+            <div class="mt-3">
+                <label class="form-label">Motivo</label>
+                <input type="text" class="form-control" th:field="*{motivo}">
+            </div>
+            <div class="mt-3">
+                <label class="form-label">Observaciones</label>
+                <textarea class="form-control" th:field="*{observaciones}" rows="2"></textarea>
+            </div>
+            <div class="mt-3" th:if="${cita.id != null}">
+                <label class="form-label">Estado</label>
+                <select class="form-select" th:field="*{estado}">
+                    <option value="PENDIENTE">Pendiente</option>
+                    <option value="CONFIRMADA">Confirmada</option>
+                    <option value="ATENDIDA">Atendida</option>
+                    <option value="CANCELADA">Cancelada</option>
+                    <option value="NO_ASISTIO">No asistió</option>
+                </select>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a th:href="@{/citas}" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: scripts}"></div>
+</body>
+</html>
